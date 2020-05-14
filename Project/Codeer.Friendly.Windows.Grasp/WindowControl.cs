@@ -314,7 +314,7 @@ namespace Codeer.Friendly.Windows.Grasp
             {
                 throw new ArgumentNullException("app");
             }
-            InitializeFromaHandle(app, windowHandle);
+            InitializeFromaHandle(app, windowHandle, null);
         }
 
 #if ENG
@@ -355,7 +355,7 @@ namespace Codeer.Friendly.Windows.Grasp
             }
             WindowsAppFriend app = (WindowsAppFriend)windowObject.App;
             AppVar ohterSystemAnalyzers = TargetAppInitializer.Initialize(app);
-            InitializeFromaHandle(app, (IntPtr)app[typeof(WindowAnalyzer), "GetHandle"](windowObject, ohterSystemAnalyzers).Core);
+            InitializeFromaHandle(app, (IntPtr)app[typeof(WindowAnalyzer), "GetHandle"](windowObject, ohterSystemAnalyzers).Core, windowObject);
         }
 
 
@@ -1840,7 +1840,7 @@ namespace Codeer.Friendly.Windows.Grasp
         /// </summary>
         /// <param name="app">アプリケーション操作クラス。</param>
         /// <param name="windowHandle">ウィンドウハンドル。</param>
-        void InitializeFromaHandle(WindowsAppFriend app, IntPtr windowHandle)
+        void InitializeFromaHandle(WindowsAppFriend app, IntPtr windowHandle,AppVar obj)
         {
             if (windowHandle == IntPtr.Zero)
             {
@@ -1848,7 +1848,7 @@ namespace Codeer.Friendly.Windows.Grasp
             }
             AppVar ohterSystemAnalyzers = TargetAppInitializer.Initialize(app);
             _app = app;
-            _windowInfoInApp = _app[typeof(WindowAnalyzer), "Analyze"](windowHandle, ohterSystemAnalyzers);
+            _windowInfoInApp = _app[typeof(WindowAnalyzer), "Analyze"](windowHandle, ohterSystemAnalyzers, obj);
             _root = (WindowInfo)(_windowInfoInApp.Core);
         }
 

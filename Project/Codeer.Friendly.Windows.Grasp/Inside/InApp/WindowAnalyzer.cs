@@ -53,8 +53,17 @@ namespace Codeer.Friendly.Windows.Grasp.Inside.InApp
 			if (control != null)
 			{
 				return control.Handle;
-			}
-			return IntPtr.Zero;
+			} else if (typeof(MainMenu) == obj.GetType())
+            {
+                MainMenu mainMenu = obj as MainMenu;
+                return mainMenu.Handle;
+            }
+            else if (typeof(MenuItem) == obj.GetType())
+            {
+                MenuItem menuItem = obj as MenuItem;
+                return menuItem.Handle;
+            }
+            return IntPtr.Zero;
 		}
 
         /// <summary>
@@ -63,7 +72,7 @@ namespace Codeer.Friendly.Windows.Grasp.Inside.InApp
         /// <param name="handle">ハンドル。</param>
         /// <param name="analyzer">別システムウィンドウ解析。</param>
         /// <returns>解析結果。</returns>
-        public static WindowInfo Analyze(IntPtr handle, IOtherSystemWindowAnalyzer[] analyzer)
+        public static WindowInfo Analyze(IntPtr handle, IOtherSystemWindowAnalyzer[] analyzer, object obj)
         {
             //子ウィンドウを全て取得する
             List<IntPtr> children = new List<IntPtr>();
@@ -81,7 +90,7 @@ namespace Codeer.Friendly.Windows.Grasp.Inside.InApp
             NativeMethods.RECT rc = new NativeMethods.RECT();
             NativeMethods.GetWindowRect(handle, ref rc);
             List<int> zIndex = new List<int>();
-            GetWindowInfo(new Point(rc.left, rc.top), info, children, zIndex, analyzer);
+            GetWindowInfo(new Point(rc.left, rc.top), info, children, zIndex, analyzer, obj);
             return info;
         }
         
@@ -200,7 +209,7 @@ namespace Codeer.Friendly.Windows.Grasp.Inside.InApp
         /// <param name="children">子ウィンドウハンドル。</param>
         /// <param name="analyzer">別システムウィンドウ解析。</param>
         /// <param name="zIndex">Zインデックス。</param>
-        private static void GetWindowInfo(Point pos, WindowInfo info, List<IntPtr> children, List<int> zIndex, IOtherSystemWindowAnalyzer[] analyzer)
+        private static void GetWindowInfo(Point pos, WindowInfo info, List<IntPtr> children, List<int> zIndex, IOtherSystemWindowAnalyzer[] analyzer, Object appObj)
 		{
 			NativeMethods.RECT rc = new NativeMethods.RECT();
 			NativeMethods.GetWindowRect(info.Handle, ref rc);
@@ -245,6 +254,16 @@ namespace Codeer.Friendly.Windows.Grasp.Inside.InApp
                     info.TypeFullName = net.GetType().FullName;
                     info.TargetObject = net;
                 }
+                else if (typeof(MainMenu) == appObj.GetType())
+                {
+                    info.TypeFullName = "System.Windows.Forms.MainMenu";
+                    info.TargetObject = appObj as MainMenu;
+                }
+                else if (typeof(MenuItem) == appObj.GetType())
+                {
+                    info.TypeFullName = "System.Windows.Forms.MenuItem";
+                    info.TargetObject = appObj as MenuItem;
+                }
             }
 
 			//自分の子ウィンドウを集める
@@ -270,7 +289,7 @@ namespace Codeer.Friendly.Windows.Grasp.Inside.InApp
 				WindowInfo c = new WindowInfo();
 				c.Handle = myChildrenSort[i];
                 allChildren.Add(c);
-				GetWindowInfo(pos, c, children, zIndex, analyzer);
+				GetWindowInfo(pos, c, children, zIndex, analyzer, appObj);
 			}
 			zIndex.RemoveAt(zIndex.Count - 1);
             
