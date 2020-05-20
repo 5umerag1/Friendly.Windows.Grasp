@@ -254,15 +254,18 @@ namespace Codeer.Friendly.Windows.Grasp.Inside.InApp
                     info.TypeFullName = net.GetType().FullName;
                     info.TargetObject = net;
                 }
-                else if (typeof(MainMenu) == appObj.GetType())
+                else if (appObj != null)
                 {
-                    info.TypeFullName = "System.Windows.Forms.MainMenu";
-                    info.TargetObject = appObj as MainMenu;
-                }
-                else if (typeof(MenuItem) == appObj.GetType())
-                {
-                    info.TypeFullName = "System.Windows.Forms.MenuItem";
-                    info.TargetObject = appObj as MenuItem;
+                    if (typeof(MainMenu) == appObj.GetType())
+                    {
+                        info.TypeFullName = "System.Windows.Forms.MainMenu";
+                        info.TargetObject = appObj as MainMenu;
+                    }
+                    else if (typeof(MenuItem) == appObj.GetType())
+                    {
+                        info.TypeFullName = "System.Windows.Forms.MenuItem";
+                        info.TargetObject = appObj as MenuItem;
+                    }
                 }
             }
 
