@@ -792,7 +792,7 @@ namespace Codeer.Friendly.Windows.Grasp
         public void Refresh()
         {
             AppVar ohterSystemAnalyzers = TargetAppInitializer.Initialize(_app);
-            _windowInfoInApp = _app[typeof(WindowAnalyzer), "Analyze"](_root.Handle, ohterSystemAnalyzers);
+            _windowInfoInApp = _app[typeof(WindowAnalyzer), "Analyze"](_root.Handle, ohterSystemAnalyzers, null);
             _root = (WindowInfo)(_windowInfoInApp.Core);
             _appVar = null;
         }
